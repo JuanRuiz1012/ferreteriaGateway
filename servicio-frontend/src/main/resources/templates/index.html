@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Ferretería - Dashboard de Servicios</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; background-color: #f4f4f9; }
+        h1 { color: #007bff; border-bottom: 2px solid #007bff; padding-bottom: 10px; }
+        h2 { color: #333; margin-top: 30px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; background-color: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        th { background-color: #007bff; color: white; }
+        .servicio-ok { color: green; font-weight: bold; }
+        .servicio-error { color: red; font-weight: bold; }
+    </style>
+</head>
+<body>
+<h1>🛠️ Ferretería Univalle - Dashboard de Microservicios</h1>
+
+<p>Accediendo a los servicios a través del **API Gateway** en <span th:text="${@environment.getProperty('api.gateway.url')}"></span></p>
+
+<h2>Inventario de Productos</h2>
+<p th:if="${productos == null or productos.isEmpty()}" class="servicio-error">❌ No se pudo conectar con el Servicio de Inventario o está vacío.</p>
+<table th:if="${productos != null and not productos.isEmpty()}">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Precio</th>
+        <th>Stock</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="p : ${productos}">
+        <td th:text="${p.id}">1</td>
+        <td th:text="${p.nombre}">Martillo</td>
+        <td th:text="${p.precio}">25.50</td>
+        <td th:text="${p.stock}">150</td>
+    </tr>
+    </tbody>
+</table>
+<p th:if="${productos != null and not productos.isEmpty()}" class="servicio-ok">✅ **Servicio de Inventario** conectado y respondiendo (vía Gateway).</p>
+
+<h2>Usuarios del Sistema</h2>
+<p th:if="${usuarios == null or usuarios.isEmpty()}" class="servicio-error">❌ No se pudo conectar con el Servicio de Usuarios o está vacío.</p>
+<table th:if="${usuarios != null and not usuarios.isEmpty()}">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Username</th>
+        <th>Rol</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="u : ${usuarios}">
+        <td th:text="${u.id}">1</td>
+        <td th:text="${u.username}">admin</td>
+        <td th:text="${u.rol}">ADMIN</td>
+    </tr>
+    </tbody>
+</table>
+<p th:if="${usuarios != null and not usuarios.isEmpty()}" class="servicio-ok">✅ **Servicio de Usuarios** conectado y respondiendo (vía Gateway).</p>
+
+<p style="margin-top: 50px;">
+    *Para probar el Servicio de Ventas, se requiere un POST request (ej. con Postman) ya que involucra múltiples pasos transaccionales (descuento de stock).*
+</p>
+
+</body>
+</html>

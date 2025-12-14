@@ -6,11 +6,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.web.reactive.function.client.WebClient;
 
 @SpringBootApplication
-public class ServicioVentasApplication {
+public class ServicioFrontendApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(ServicioVentasApplication.class, args);
+        SpringApplication.run(ServicioFrontendApplication.class, args);
     }
+
 
     @Bean
     public WebClient.Builder webClientBuilder() {

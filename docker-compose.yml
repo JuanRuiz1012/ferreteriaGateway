@@ -1,14 +1,12 @@
-version: '3.8'
-
 services:
   # 1. API GATEWAY (Puerto de entrada 8080)
   api-gateway:
     image: ferreteria/gateway:1.0
     build:
-      context: ./api-gateway # Busca el Dockerfile en la carpeta api-gateway
+      context: ./api-gateway
       dockerfile: Dockerfile
     ports:
-      - "8080:8080" # El puerto 8080 es el único visible al mundo exterior
+      - "8080:8080"
     depends_on:
       - servicio-usuarios
       - servicio-inventario
@@ -24,14 +22,11 @@ services:
       context: ./servicio-usuarios
       dockerfile: Dockerfile
     expose:
-      - "8081" # Solo accesible internamente por el Gateway
+      - "8081"
     environment:
-      # Configuraciones de conexión a la Base de Datos de XAMPP
       SPRING_DATASOURCE_URL: jdbc:mysql://host.docker.internal:3306/db_usuarios
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD:
-      # Configuración para que WebClient use los nombres internos de la red Docker
-      microservice.usuarios.url: http://servicio-usuarios:8081/usuarios
     networks:
       - ferreteria-network
     restart: on-failure
@@ -45,12 +40,10 @@ services:
     expose:
       - "8083"
     environment:
-      # Configuraciones de conexión a la Base de Datos de XAMPP
       SPRING_DATASOURCE_URL: jdbc:mysql://host.docker.internal:3306/db_inventario
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD:
-      # Configuración para que WebClient use los nombres internos de la red Docker
-      microservice.inventario.url: http://servicio-inventario:8083/productos
+      MICROSERVICE_INVENTARIO_URL: http://servicio-inventario:8083/productos
     networks:
       - ferreteria-network
     restart: on-failure
@@ -64,18 +57,31 @@ services:
     expose:
       - "8082"
     environment:
-      # Configuraciones de conexión a la Base de Datos de XAMPP
       SPRING_DATASOURCE_URL: jdbc:mysql://host.docker.internal:3306/db_ventas
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD:
-      # Las URLs para WebClient deben apuntar a los nombres de servicio en Docker
-      microservice.inventario.url: http://servicio-inventario:8083/productos
-      microservice.usuarios.url: http://servicio-usuarios:8081/usuarios
+      MICROSERVICE_INVENTARIO_URL: http://servicio-inventario:8083/productos
+      MICROSERVICE_USUARIOS_URL: http://servicio-usuarios:8081/usuarios
     networks:
       - ferreteria-network
     restart: on-failure
 
-# Definición de la red interna para la comunicación segura
+  # 5. SERVICIO DE FRONTEND (Spring Boot)
+  servicio-frontend:
+    image: ferreteria/frontend:1.0
+    build:
+      context: ./servicio-frontend
+      dockerfile: Dockerfile
+    ports:
+      - "8090:8090"
+    depends_on:
+      - api-gateway
+    environment:
+      API_GATEWAY_URL: http://api-gateway:8080
+    networks:
+      - ferreteria-network
+    restart: on-failure
+
 networks:
   ferreteria-network:
     driver: bridge

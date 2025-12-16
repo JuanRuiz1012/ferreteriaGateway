@@ -17,10 +17,9 @@
 <body>
 <h1>🛠️ Ferretería Univalle - Dashboard de Microservicios</h1>
 
-<p>Accediendo a los servicios a través del **API Gateway** en <span th:text="${@environment.getProperty('api.gateway.url')}"></span></p>
 
 <h2>Inventario de Productos</h2>
-<p th:if="${productos == null or productos.isEmpty()}" class="servicio-error">❌ No se pudo conectar con el Servicio de Inventario o está vacío.</p>
+<p th:if="${productos == null or productos.isEmpty()}" class="servicio-error"> No se pudo conectar con el Servicio de Inventario o está vacío.</p>
 <table th:if="${productos != null and not productos.isEmpty()}">
     <thead>
     <tr>
@@ -39,10 +38,9 @@
     </tr>
     </tbody>
 </table>
-<p th:if="${productos != null and not productos.isEmpty()}" class="servicio-ok">✅ **Servicio de Inventario** conectado y respondiendo (vía Gateway).</p>
 
 <h2>Usuarios del Sistema</h2>
-<p th:if="${usuarios == null or usuarios.isEmpty()}" class="servicio-error">❌ No se pudo conectar con el Servicio de Usuarios o está vacío.</p>
+<p th:if="${usuarios == null or usuarios.isEmpty()}" class="servicio-error"> No se pudo conectar con el Servicio de Usuarios o está vacío.</p>
 <table th:if="${usuarios != null and not usuarios.isEmpty()}">
     <thead>
     <tr>
@@ -59,11 +57,7 @@
     </tr>
     </tbody>
 </table>
-<p th:if="${usuarios != null and not usuarios.isEmpty()}" class="servicio-ok">✅ **Servicio de Usuarios** conectado y respondiendo (vía Gateway).</p>
 
-<p style="margin-top: 50px;">
-    *Para probar el Servicio de Ventas, se requiere un POST request (ej. con Postman) ya que involucra múltiples pasos transaccionales (descuento de stock).*
-</p>
 
 </body>
 </html>

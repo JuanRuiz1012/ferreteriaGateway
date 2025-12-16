@@ -1,5 +1,5 @@
 services:
-  # 1. API GATEWAY (Puerto de entrada 8080)
+  # 1. API GATEWAY
   api-gateway:
     image: ferreteria/gateway:1.0
     build:
@@ -13,60 +13,62 @@ services:
       - servicio-ventas
     networks:
       - ferreteria-network
-    restart: on-failure
+    restart: unless-stopped
 
-  # 2. SERVICIO DE USUARIOS (Puerto 8081)
+  # 2. SERVICIO DE USUARIOS
   servicio-usuarios:
     image: ferreteria/usuarios:1.0
     build:
       context: ./servicio-usuarios
       dockerfile: Dockerfile
-    expose:
-      - "8081"
+    ports:
+      - "8081:8081"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://host.docker.internal:3306/db_usuarios
+      SPRING_DATASOURCE_URL: jdbc:mysql://host.docker.internal:3306/db_usuarios?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
       SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD:
+      SPRING_DATASOURCE_PASSWORD: JDOspina071325
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
     networks:
       - ferreteria-network
-    restart: on-failure
+    restart: unless-stopped
 
-  # 3. SERVICIO DE INVENTARIO (Puerto 8083)
+  # 3. SERVICIO DE INVENTARIO
   servicio-inventario:
     image: ferreteria/inventario:1.0
     build:
       context: ./servicio-inventario
       dockerfile: Dockerfile
-    expose:
-      - "8083"
+    ports:
+      - "8083:8083"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://host.docker.internal:3306/db_inventario
+      SPRING_DATASOURCE_URL: jdbc:mysql://host.docker.internal:3306/db_inventario?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
       SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD:
-      MICROSERVICE_INVENTARIO_URL: http://servicio-inventario:8083/productos
+      SPRING_DATASOURCE_PASSWORD: JDOspina071325
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
     networks:
       - ferreteria-network
-    restart: on-failure
+    restart: unless-stopped
 
-  # 4. SERVICIO DE VENTAS (Puerto 8082)
+  # 4. SERVICIO DE VENTAS
   servicio-ventas:
     image: ferreteria/ventas:1.0
     build:
       context: ./servicio-ventas
       dockerfile: Dockerfile
-    expose:
-      - "8082"
+    ports:
+      - "8082:8082"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://host.docker.internal:3306/db_ventas
+      SPRING_DATASOURCE_URL: jdbc:mysql://host.docker.internal:3306/db_ventas?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
       SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD:
-      MICROSERVICE_INVENTARIO_URL: http://servicio-inventario:8083/productos
-      MICROSERVICE_USUARIOS_URL: http://servicio-usuarios:8081/usuarios
+      SPRING_DATASOURCE_PASSWORD: JDOspina071325
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      MICROSERVICE_INVENTARIO_URL: http://servicio-inventario:8083
+      MICROSERVICE_USUARIOS_URL: http://servicio-usuarios:8081
     networks:
       - ferreteria-network
-    restart: on-failure
+    restart: unless-stopped
 
-  # 5. SERVICIO DE FRONTEND (Spring Boot)
+  # 5. SERVICIO FRONTEND
   servicio-frontend:
     image: ferreteria/frontend:1.0
     build:
@@ -80,7 +82,7 @@ services:
       API_GATEWAY_URL: http://api-gateway:8080
     networks:
       - ferreteria-network
-    restart: on-failure
+    restart: unless-stopped
 
 networks:
   ferreteria-network:

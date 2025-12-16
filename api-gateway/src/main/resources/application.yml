@@ -1,27 +1,30 @@
+server:
+  port: 8080
+
 spring:
+  application:
+    name: api-gateway
   cloud:
     gateway:
       routes:
-        # USUARIOS
+
         - id: usuarios-service
           uri: http://servicio-usuarios:8081
           predicates:
             - Path=/api/usuarios/**
           filters:
-            - StripPrefix=1
+            - StripPrefix=2
 
-        # INVENTARIO
         - id: inventario-service
           uri: http://servicio-inventario:8083
           predicates:
             - Path=/api/inventario/**
           filters:
-            - StripPrefix=1
+            - StripPrefix=2
 
-        # VENTAS
         - id: ventas-service
           uri: http://servicio-ventas:8082
           predicates:
             - Path=/api/ventas/**
           filters:
-            - StripPrefix=1
+            - StripPrefix=2

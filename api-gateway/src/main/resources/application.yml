@@ -1,34 +1,27 @@
-server:
-  port: 8080 # Puerto estándar del API Gateway
-
 spring:
-  application:
-    name: api-gateway
   cloud:
     gateway:
       routes:
-        # RUTA 1: SERVICIO DE USUARIOS
+        # USUARIOS
         - id: usuarios-service
-          # URI usa el nombre del servicio Docker y su puerto
           uri: http://servicio-usuarios:8081
           predicates:
-            - Path=/api/usuarios/** # Si la URL empieza con /api/usuarios
+            - Path=/api/usuarios/**
           filters:
-            # Elimina /api/usuarios del path antes de enviar al microservicio
-            - RewritePath=/api/usuarios/(?<segment>.*), /$\{segment}
+            - StripPrefix=1
 
-        # RUTA 2: SERVICIO DE INVENTARIO
+        # INVENTARIO
         - id: inventario-service
           uri: http://servicio-inventario:8083
           predicates:
             - Path=/api/inventario/**
           filters:
-            - RewritePath=/api/inventario/(?<segment>.*), /$\{segment}
+            - StripPrefix=1
 
-        # RUTA 3: SERVICIO DE VENTAS
+        # VENTAS
         - id: ventas-service
           uri: http://servicio-ventas:8082
           predicates:
             - Path=/api/ventas/**
           filters:
-            - RewritePath=/api/ventas/(?<segment>.*), /$\{segment}
+            - StripPrefix=1

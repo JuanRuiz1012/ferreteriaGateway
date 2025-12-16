@@ -38,13 +38,38 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     public List<UsuarioResponseDto> findAllDto() {
-        return List.of();
+        return usuarioRepository.findAll().stream().map(usuario -> {
+            UsuarioResponseDto dto = new UsuarioResponseDto();
+            dto.setId(usuario.getId());
+            dto.setUsername(usuario.getUsername());
+            dto.setNombre(usuario.getNombre());
+            dto.setEmail(usuario.getEmail());
+            dto.setRol(usuario.getRol());
+            return dto;
+        }).toList();
     }
 
     @Override
     public UsuarioResponseDto saveFromDto(UsuarioRequestDto usuarioDto) {
-        return null;
+        Usuario usuario = new Usuario();
+        usuario.setUsername(usuarioDto.getUsername());
+        usuario.setPassword(usuarioDto.getPassword());
+        usuario.setNombre(usuarioDto.getNombre());
+        usuario.setEmail(usuarioDto.getEmail());
+        usuario.setRol(usuarioDto.getRol());
+
+        Usuario guardado = usuarioRepository.save(usuario);
+
+        UsuarioResponseDto response = new UsuarioResponseDto();
+        response.setId(guardado.getId());
+        response.setUsername(guardado.getUsername());
+        response.setNombre(guardado.getNombre());
+        response.setEmail(guardado.getEmail());
+        response.setRol(guardado.getRol());
+
+        return response;
     }
+
 
     public Optional<Usuario> findByUsername(String username) {
         return Optional.ofNullable(usuarioRepository.findByUsername(username));

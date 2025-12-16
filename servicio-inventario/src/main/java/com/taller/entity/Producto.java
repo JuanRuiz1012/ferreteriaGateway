@@ -3,7 +3,8 @@ package com.taller.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
-// Entidad principal (Tabla A)
+import java.math.BigDecimal; // Añadir este import
+
 @Entity
 @Data
 @Table(name = "producto")
@@ -22,7 +23,7 @@ public class Producto {
     private String codigo;
 
     @Column(precision = 10, scale = 2)
-    private Double precio;
+    private BigDecimal precio; // Cambiado de Double a BigDecimal
 
     @Column(nullable = false)
     private Integer stock;

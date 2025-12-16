@@ -1,6 +1,5 @@
 package com.taller.service;
 
-
 import com.taller.dto.ItemVentaDto;
 import com.taller.dto.VentaRequestDto;
 import com.taller.dto.VentaResponseDto;
@@ -15,7 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
-
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -54,7 +53,7 @@ public class VentaServiceImpl implements VentaService {
         venta.setIdUsuario(ventaDto.getIdUsuario());
         Venta ventaGuardada = ventaRepository.save(venta); // Guarda el encabezado de la venta
 
-        Double totalVenta = 0.0;
+        BigDecimal totalVenta = BigDecimal.ZERO;
 
         // 1. Procesar cada ítem de la venta
         for (ItemVentaDto item : ventaDto.getItems()) {
@@ -80,11 +79,14 @@ public class VentaServiceImpl implements VentaService {
             detalle.setIdVenta(ventaGuardada.getId());
             detalle.setIdProducto(item.getIdProducto());
             detalle.setCantidad(item.getCantidad());
-            detalle.setPrecioUnitario(producto.getPrecio()); // Usamos el precio del producto
-            detalle.setSubtotal(item.getCantidad() * producto.getPrecio());
+            detalle.setPrecioUnitario(producto.getPrecio()); // Usamos el precio del producto (BigDecimal)
+
+            // Calcular subtotal: precio * cantidad
+            BigDecimal subtotal = producto.getPrecio().multiply(BigDecimal.valueOf(item.getCantidad()));
+            detalle.setSubtotal(subtotal);
 
             detalleVentaRepository.save(detalle);
-            totalVenta += detalle.getSubtotal();
+            totalVenta = totalVenta.add(subtotal);
         }
 
         // 4. Actualizar el total en el encabezado de la venta
@@ -106,7 +108,7 @@ public class VentaServiceImpl implements VentaService {
     @Data
     public static class ProductoDto {
         private Long id;
-        private Double precio;
+        private BigDecimal precio; // Cambiado a BigDecimal
         private Integer stock;
     }
 }
